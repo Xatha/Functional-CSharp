@@ -1,34 +1,41 @@
 namespace Functional_CSharp;
 
+public readonly struct Option
+{
+    public static Option<T> None<T>() => new(false);
+    public static Option<T> None<T>(T type) => new(false);
+    public static Option<T> Some<T>(T value) => new(value);
+}
+
 public readonly struct Option<T>
 {
     private readonly T _value;
 
     public bool IsSome { get; }
 
-    private Option(T value)
+    internal Option(T value)
     {
         _value = value;
         IsSome = true;
     }
     
-    private Option(bool hasValue)
+    internal Option(bool hasValue)
     {
         _value = default!;
         IsSome = hasValue;
     }
     
-    public static Option<T> None = new(false);
+    //public static Option<T> None = new(false);
 
-    public static Option<T> Some(T value) => new(value);
+    //public static Option<T> Some<T>(T value) => new(value);
     
     //But I feel this is the most proper and ergonomic.
-    public Option<U> Bind<U>(Func<T, U> func) => IsSome ? Option<U>.Some(func(_value)) : Option<U>.None;
+    public Option<U> Bind<U>(Func<T, U> func) => IsSome ? Option.Some(func(_value)) : Option.None<U>();
     
     //Makes chaining of lambda arguments easier.
-    public Option<T> Bind(Func<T, Option<T>> func) => IsSome ? func(_value) : None;
+    public Option<T> Bind(Func<T, Option<T>> func) => IsSome ? func(_value) : Option.None<T>();
 
-    public Option<T> Filter(Func<T, bool> predicate) => IsSome && predicate(_value) ? this : None;
+    public Option<T> Filter(Func<T, bool> predicate) => IsSome && predicate(_value) ? this : Option.None<T>();
 
     public T Unwrap() => IsSome ? _value : throw new InvalidOperationException("Unwrapping None");
     public T UnwrapOr(T fallBackValue) => IsSome ? _value : fallBackValue;
@@ -36,9 +43,9 @@ public readonly struct Option<T>
     //Applies a function between two option types.
 
     //Combine two different options with static method.
-    public Option<T> Combine<U>(Func<T, U, Option<T>> combiner, Option<U> other)
+    public Option<T> Combine<U>(Option<U> other, Func<T, U, Option<T>> combiner)
     {
-        if (!IsSome || !other.IsSome) return None;
+        if (!IsSome || !other.IsSome) return Option.None<T>();
 
         return combiner(Unwrap(), other.Unwrap());
     }

@@ -3,28 +3,27 @@ using BenchmarkDotNet.Running;
 using Functional_CSharp;
 using Functional_CSharp.Extensions;
 using Functional_CSharp_Benchmarks;
+using static Functional_CSharp.Option;
 
 //Just some testing stuff.
 
 var list = new List<Option<int>>()
 {
-    Option<int>.Some(1),
-    Option<int>.Some(2),
-    Option<int>.Some(3),
-    Option<int>.Some(4),
-    Option<int>.Some(5),
-    Option<int>.Some(6),
-    Option<int>.Some(7),
-    Option<int>.Some(8),
-    Option<int>.Some(9),
-    Option<int>.Some(10)
+    Some(1),
+    Some(2),
+    Some(3),
+    Some(4),
+    Some(5),
+    Some(6),
+    Some(7),
+    Some(8),
+    Some(9),
+    Some(10)
 };
 
-var initialState = Option<string>.Some("");
+Option<string> Add(string x, int y, int o) => Some(x + y);
 
-Option<string> Add(string x, int y) => Option<string>.Some(x + y);
-
-var numbersToString = list.Fold(initialState, (s, option) => s.Combine(Add, option).Bind(x=>x + " || "));
+var numbersToString = list.Fold(Some(""), (s, option) => s.Combine(option, (s1, i) => Add(s1, i, 0)).Bind(x=>x + " || "));
 
 Console.WriteLine(numbersToString.UnwrapOr("Failed"));
 

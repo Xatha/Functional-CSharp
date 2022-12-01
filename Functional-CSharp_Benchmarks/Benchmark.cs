@@ -12,7 +12,7 @@ public class Benchmark
     //[Benchmark]
     public void UnwrapOption()
     {
-        var option = Option<int>.Some(1).Unwrap();
+        var option = Option.Some(1).Unwrap();
     }
     
     static int SumRecursive(int n, int acc) => n == 0 ? acc : SumRecursive(n - 1, acc + n);
@@ -27,22 +27,23 @@ public class Benchmark
         }
     }
     
-    //[Benchmark]
+    [Benchmark]
     public void SumRecursive()
     {
         var sum = SumRecursive(Iterations, 0);
     }
-
+    
+    
     //[Benchmark]
     public void SumOption() 
     {
-        var sum = Option<int>.Some(0).Bind(acc => SumRecursive(Iterations, acc));
+        var sum = Option.Some(0).Bind(acc => SumRecursive(Iterations, acc));
     }
     
     //[Benchmark]
     public void SumNone() 
     {
-        var sum = Option<int>.None.Bind(acc => SumRecursive(Iterations, acc));
+        var sum = Option.None<int>().Bind(acc => SumRecursive(Iterations, acc));
     }
     
 }
