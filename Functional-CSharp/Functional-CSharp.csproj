@@ -4,7 +4,7 @@
         <TargetFramework>net7</TargetFramework>
         <RootNamespace>Functional_CSharp</RootNamespace>
         <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
+        <Nullable>disable</Nullable>
     </PropertyGroup>
 
 </Project>
