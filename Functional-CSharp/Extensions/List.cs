@@ -1,13 +1,12 @@
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
 namespace Functional_CSharp.Extensions;
 
 public static class List
 {
-    public static List<U> Map<T, U>(this List<T> source, Func<T, U> mapper)
+    public static List<TU> Map<T, TU>(this List<T> source, Func<T, TU> mapper)
     {
-        var result = new List<U>(source.Count);
+        var result = new List<TU>(source.Count);
         var listSpan = CollectionsMarshal.AsSpan(source);
         
         for (var i = 0; i < listSpan.Length; i++)

@@ -9,6 +9,11 @@ public readonly struct Option
 
 public readonly struct Option<T>
 {
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(_value, IsSome);
+    }
+
     private readonly T _value;
 
     public bool IsSome { get; }
@@ -24,13 +29,9 @@ public readonly struct Option<T>
         _value = default!;
         IsSome = hasValue;
     }
-    
-    //public static Option<T> None = new(false);
 
-    //public static Option<T> Some<T>(T value) => new(value);
-    
     //But I feel this is the most proper and ergonomic.
-    public Option<U> Bind<U>(Func<T, U> func) => IsSome ? Option.Some(func(_value)) : Option.None<U>();
+    public Option<TU> Bind<TU>(Func<T, TU> func) => IsSome ? Option.Some(func(_value)) : Option.None<TU>();
     
     //Makes chaining of lambda arguments easier.
     public Option<T> Bind(Func<T, Option<T>> func) => IsSome ? func(_value) : Option.None<T>();
@@ -39,14 +40,11 @@ public readonly struct Option<T>
 
     public T Unwrap() => IsSome ? _value : throw new InvalidOperationException("Unwrapping None");
     public T UnwrapOr(T fallBackValue) => IsSome ? _value : fallBackValue;
-
-    //Applies a function between two option types.
-
-    //Combine two different options with static method.
-    public Option<T> Combine<U>(Option<U> other, Func<T, U, Option<T>> combiner)
+    public Option<T> Or(Option<T> other) => IsSome ? this : other;
+    
+    public Option<T> Combine<TU>(Option<TU> other, Func<T, TU, Option<T>> combiner)
     {
         if (!IsSome || !other.IsSome) return Option.None<T>();
-
         return combiner(Unwrap(), other.Unwrap());
     }
 
@@ -59,5 +57,15 @@ public readonly struct Option<T>
     public static bool operator !=(Option<T> first, Option<T> second)
     {
         return !(first == second);
+    }
+    
+    public bool Equals(Option<T> other)
+    {
+        return EqualityComparer<T>.Default.Equals(_value, other._value) && IsSome == other.IsSome;
+    }
+
+    public override bool Equals(object obj)
+    {
+        return obj is Option<T> other && Equals(other);
     }
 }

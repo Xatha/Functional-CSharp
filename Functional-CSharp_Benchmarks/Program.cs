@@ -1,8 +1,5 @@
-﻿using System.Drawing;
-using BenchmarkDotNet.Running;
-using Functional_CSharp;
+﻿using Functional_CSharp;
 using Functional_CSharp.Extensions;
-using Functional_CSharp_Benchmarks;
 using static Functional_CSharp.Option;
 
 //Just some testing stuff.
@@ -21,9 +18,13 @@ var list = new List<Option<int>>()
     Some(10)
 };
 
-Option<string> Add(string x, int y, int o) => Some(x + y);
+Option<string> Add(string x, int y) => Some(x + y);
 
-var numbersToString = list.Fold(Some(""), (s, option) => s.Combine(option, (s1, i) => Add(s1, i, 0)).Bind(x=>x + " || "));
+list = list.Map(x => x.Filter(e => e % 2 != 1)).FindAll(x=> x.IsSome);
+list.ForEach(x => Console.WriteLine(x.UnwrapOr(-1)));
+
+
+var numbersToString = list.Fold(Some(""), (s, option) => s.Combine(option, (s1, i) => Add(s1, i)).Bind(x=>x + " || "));
 
 Console.WriteLine(numbersToString.UnwrapOr("Failed"));
 
