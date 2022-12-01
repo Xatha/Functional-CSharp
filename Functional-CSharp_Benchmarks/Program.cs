@@ -24,7 +24,8 @@ list = list.Map(x => x.Filter(e => e % 2 != 1)).FindAll(x=> x.IsSome);
 list.ForEach(x => Console.WriteLine(x.UnwrapOr(-1)));
 
 
-var numbersToString = list.Fold(Some(""), (s, option) => s.Combine(option, (s1, i) => Add(s1, i)).Bind(x=>x + " || "));
+var numbersToString = list.Fold(Some(""), (s, option) => 
+    s.Combine(option, Add).Bind(x=> x + " "));
 
 Console.WriteLine(numbersToString.UnwrapOr("Failed"));
 

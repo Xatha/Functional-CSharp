@@ -3,17 +3,11 @@ namespace Functional_CSharp;
 public readonly struct Option
 {
     public static Option<T> None<T>() => new(false);
-    public static Option<T> None<T>(T type) => new(false);
     public static Option<T> Some<T>(T value) => new(value);
 }
 
 public readonly struct Option<T>
 {
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(_value, IsSome);
-    }
-
     private readonly T _value;
 
     public bool IsSome { get; }
@@ -67,5 +61,10 @@ public readonly struct Option<T>
     public override bool Equals(object obj)
     {
         return obj is Option<T> other && Equals(other);
+    }
+    
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(_value, IsSome);
     }
 }
